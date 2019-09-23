@@ -35,11 +35,12 @@ fn main() {
     let mut model = LinearRegression::new();
     model.fit(&x_train, &y_train);
     let prediction = model.predict(&x_test);
-    println!("{}", prediction);
-
+    let w = model.w();
+    println!("The predictions are {:#?}", prediction);
+    println!("The parameters are {:#?}", w);
 }
 
-
+// Object Oriented Program
 pub struct LinearRegression {
     w: Array<f32, Ix1>,
 }
@@ -53,10 +54,11 @@ impl LinearRegression {
     }
 
     pub fn w(&self) -> &Array<f32, Ix1> {&self.w}
-
+    
     pub fn fit(&mut self, x: &Array<f32, Ix2>, y: &Array<f32, Ix1>) {
         let x_len = x.len_of(Axis(0));
         let ones_arr = Array::from_elem((x_len, 1), 1.);
+        // Insert column of all 1 to position of first column
         let xtil = stack(Axis(1), &[ones_arr.view(), x.view()]).unwrap();
         let a = xtil.t().dot(&xtil);
         let b = xtil.t().dot(y);
